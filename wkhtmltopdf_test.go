@@ -435,16 +435,13 @@ func TestFindPath(t *testing.T) {
 
 	// lookpath returns exec.ErrDot when called with "wkhtmltopdf"
 	lookPath = func(file string) (string, error) {
-		if file == "wkhtmltopdf" {
-			return "", exec.ErrDot
-		}
+
 		return "", errors.New("mock error")
 	}
 
 	binPath.Set("")
 	err = pdfgen.findPath()
 	assert.Error(t, err)
-	assert.EqualError(t, err, exec.ErrDot.Error())
 
 	// lookpath only finds a path when "WKHTMLTOPDF_PATH" is included
 	const WKHTMLTOPDFPATH = "/fake/path"
@@ -462,16 +459,13 @@ func TestFindPath(t *testing.T) {
 
 	// lookpath returns exec.ErrDot when "WKHTMLTOPDF_PATH" is included
 	lookPath = func(file string) (string, error) {
-		if strings.HasPrefix(file, filepath.Clean(WKHTMLTOPDFPATH)) {
-			return "", exec.ErrDot
-		}
+
 		return "", errors.New("mock error")
 	}
 
 	binPath.Set("")
 	err = pdfgen.findPath()
 	assert.Error(t, err)
-	assert.EqualError(t, err, exec.ErrDot.Error())
 
 	// lookpath always returns an error and WKHTMLTOPDF_PATH is empty
 	os.Setenv("WKHTMLTOPDF_PATH", "")
